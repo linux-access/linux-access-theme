@@ -5,16 +5,14 @@
   <ul class="space-y-4">
     {{ range .Data.Terms }}
       {{ $key := .Page.Title | urlize }}
-      {{ $author := index site.Data.authors $key }}
+      {{ $author := (index site.Data.authors $key) | default dict }}
       <li>
         <a href="{{ .Page.RelPermalink }}" class="block p-4 border rounded hover:bg-gray-50">
-          {{ with $author }}
-            <h2 class="text-xl font-semibold text-blue-600">{{ .name }}</h2>
-            {{ with .bio }}
-              <p class="text-sm text-gray-700 mt-1">{{ . }}</p>
-            {{ end }}
-          {{ else }}
-            <h2 class="text-xl font-semibold text-blue-600">{{ .Page.Title }}</h2>
+          <h2 class="text-xl font-semibold text-blue-600">
+            {{ with $author.name }}{{ . }}{{ else }}{{ .Page.Title }}{{ end }}
+          </h2>
+          {{ with $author.bio }}
+            <p class="text-sm text-gray-700 mt-1">{{ . }}</p>
           {{ end }}
         </a>
       </li>
