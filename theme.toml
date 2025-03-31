@@ -1,0 +1,4 @@
+name = "Linux Access"
+license = "MIT"
+description = "A Hugo theme for accessible Linux content"
+min_version = "0.123.0"

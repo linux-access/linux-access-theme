@@ -1,0 +1,23 @@
+{{ define "main" }}
+<main class="max-w-4xl mx-auto px-4 py-8">
+  {{ $authorId := .Title }}
+  {{ $author := site.Data.authors[$authorId] }}
+
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">{{ with $author.name }}{{ . }}{{ else }}{{ .Title }}{{ end }}</h1>
+    {{ with $author.bio }}
+      <p class="mt-2 text-gray-700">{{ . }}</p>
+    {{ end }}
+  </div>
+
+  <h2 class="text-2xl font-semibold mb-4">Articles by {{ with $author.name }}{{ . }}{{ else }}{{ .Title }}{{ end }}</h2>
+  <ul class="space-y-3">
+    {{ range .Pages }}
+    <li>
+      <a href="{{ .RelPermalink }}" class="text-lg text-blue-600 hover:underline">{{ .Title }}</a>
+      <p class="text-sm text-gray-600">Published: {{ .Date.Format "Jan 2, 2006" }}</p>
+    </li>
+    {{ end }}
+  </ul>
+</main>
+{{ end }}

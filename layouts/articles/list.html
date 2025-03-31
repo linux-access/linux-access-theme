@@ -1,0 +1,49 @@
+{{ define "main" }}
+<main class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6">Articles</h1>
+
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search articles by title..."
+    class="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md"
+    aria-label="Search articles by title"
+  />
+
+  <ul id="articleList">
+    {{ range .Pages }}
+    <li class="mb-4 border-b pb-4" data-title="{{ .Title | lower }}">
+      <a href="{{ .RelPermalink }}" class="text-xl text-blue-600 hover:underline font-medium">
+        {{ .Title }}
+      </a>
+      <p class="text-sm text-gray-600">
+        Published: {{ .Date.Format "Jan 2, 2006" }}
+        {{ with .Params.author }}
+          {{ $author := site.Data.authors.[.]}}
+
+          {{ if $author }}
+            — By <span class="font-medium text-gray-800">{{ $author.name }}</span>
+          {{ else }}
+            — By <span class="font-medium text-gray-800">{{ . }}</span>
+          {{ end }}
+        {{ end }}
+      </p>
+      <p class="text-gray-800 mt-1">{{ .Summary }}</p>
+    </li>
+    {{ end }}
+  </ul>
+
+  <script>
+    const input = document.getElementById("searchInput");
+    const listItems = document.querySelectorAll("#articleList > li");
+
+    input.addEventListener("input", function () {
+      const query = this.value.toLowerCase();
+      listItems.forEach(item => {
+        const title = item.getAttribute("data-title");
+        item.style.display = title.includes(query) ? "block" : "none";
+      });
+    });
+  </script>
+</main>
+{{ end }}
