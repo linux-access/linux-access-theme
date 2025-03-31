@@ -4,7 +4,7 @@
 
   <ul class="space-y-4">
     {{ range .Data.Terms }}
-      {{ $author := site.Data.authors.[.Page.Title] }}
+      {{ $author := index site.Data.authors .Page.Title }}
       <li>
         <a href="{{ .Page.RelPermalink }}" class="block p-4 border rounded hover:bg-gray-50">
           <h2 class="text-xl font-semibold text-blue-600">{{ with $author.name }}{{ . }}{{ else }}{{ .Page.Title }}{{ end }}</h2>
