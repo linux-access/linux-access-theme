@@ -1,0 +1,91 @@
+{{ define "main" }}
+<main class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6">{{ .Title }}</h1>
+
+  <div class="mb-8 text-lg text-gray-700 dark:text-gray-300">
+    {{ .Content }}
+  </div>
+
+  <!-- Search + Sort UI -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <input
+      type="text"
+      id="search"
+      placeholder="Search articles..."
+      class="w-full sm:w-1/2 px-4 py-2 border rounded"
+    />
+    <select id="sort" class="px-3 py-2 border rounded">
+      <option value="newest">Newest to Oldest</option>
+      <option value="oldest">Oldest to Newest</option>
+    </select>
+  </div>
+
+  <!-- Article list container -->
+  <ul id="article-list" class="space-y-6"></ul>
+
+  <!-- No results message -->
+  <p id="no-results" class="text-gray-600 italic hidden">No articles found.</p>
+
+  <script>
+    async function loadArticles() {
+      const res = await fetch('/index.json');
+      const articles = await res.json();
+
+      const list = document.getElementById('article-list');
+      const search = document.getElementById('search');
+      const sort = document.getElementById('sort');
+      const noResults = document.getElementById('no-results');
+
+      function render(filtered) {
+        list.innerHTML = '';
+
+        if (filtered.length === 0) {
+          noResults.classList.remove('hidden');
+          return;
+        }
+
+        noResults.classList.add('hidden');
+
+        for (const article of filtered) {
+          const li = document.createElement('li');
+          li.className = "border-b pb-4";
+
+          li.innerHTML = `
+            <a href="${article.permalink}" class="text-xl font-medium text-blue-600 hover:underline">
+              ${article.title}
+            </a>
+            <p class="text-sm text-gray-600">Published: ${article.date}</p>
+            <p class="text-gray-700 dark:text-gray-300 mt-1">${article.summary}</p>
+          `;
+
+          list.appendChild(li);
+        }
+      }
+
+      function applyFilters() {
+        const term = search.value.toLowerCase();
+        const sortOrder = sort.value;
+
+        let filtered = articles.filter(a =>
+          a.title.toLowerCase().includes(term)
+        );
+
+        filtered.sort((a, b) => {
+          return sortOrder === 'oldest'
+            ? new Date(a.date) - new Date(b.date)
+            : new Date(b.date) - new Date(a.date);
+        });
+
+        render(filtered);
+      }
+
+      search.addEventListener('input', applyFilters);
+      sort.addEventListener('change', applyFilters);
+
+      render(articles); // initial load
+    }
+
+    loadArticles();
+  </script>
+</main>
+{{ end }}

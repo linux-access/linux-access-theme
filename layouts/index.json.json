@@ -1,0 +1,15 @@
+[
+    {{- $pages := where .Site.RegularPages "Section" "articles" -}}
+    {{- range $index, $page := $pages -}}
+      {{- if gt $index 0 }},{{ end }}
+      {
+        "title": {{ $page.Title | jsonify }},
+        "date": {{ $page.Date.Format "2006-01-02" | jsonify }},
+        "author": {{ $page.Params.author | default "Unknown" | jsonify }},
+        "summary": {{ $page.Summary | plainify | jsonify }},
+        "tags": {{ $page.Params.tags | default (slice) | jsonify }},
+        "permalink": {{ $page.Permalink | jsonify }}
+      }
+    {{- end }}
+  ]
+  
